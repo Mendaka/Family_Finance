@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "16388724828",
+    "project_id": "family-finance-724cb",
+    "storage_bucket": "family-finance-724cb.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:16388724828:android:485864a15bd31a7ae1ee99",
+        "android_client_info": {
+          "package_name": "com.taidev2024.family_finance"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDPvtQ5m80Eo6UT8ymWBUimDSdLNAOG9uE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
