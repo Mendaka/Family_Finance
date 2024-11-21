@@ -8,7 +8,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import 'dashboard.dart';
 
 Future<bool> checkLoginStatus() async {
@@ -40,7 +39,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
-    return MaterialApp(
+    return 
+    MaterialApp(
       title: 'Family Finance',
      theme: ThemeData.light(),
       darkTheme: ThemeData.dark(),
