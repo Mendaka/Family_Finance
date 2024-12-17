@@ -33,12 +33,14 @@ class _AddTransactionFormState extends State<AddTransactionForm> {
           "shn": "ငိုၼ်းၶဝ်ႈ",
           "th": "รายรับ",
           "en": "Income",
+          "mm": "ဝင်ငွေ",
         }[languageCode]!;
       case "ငိုၼ်းဢွၵ်ႇ":
         return {
           "shn": "ငိုၼ်းဢွၵ်ႇ",
           "th": "รายจ่าย",
           "en": "Expense",
+          "mm": "ကုန်ကျစရိတ်",
         }[languageCode]!;
       default:
         return type;
@@ -49,45 +51,76 @@ class _AddTransactionFormState extends State<AddTransactionForm> {
   Map<String, String> _getTranslatedCategory(String category) {
     switch (category) {
       case "ၶဝ်ႈၽၵ်း":
-        return {"shn": "ၶဝ်ႈၽၵ်း", "th": "อาหาร", "en": "Food"};
+        return {
+          "shn": "ၶဝ်ႈၽၵ်း",
+          "th": "อาหาร",
+          "en": "Food",
+          "mm": "အစားအသောက်"
+        };
       case "ၶွင်ၸႂ်ႉ":
-        return {"shn": "ၶွင်ၸႂ်ႉ", "th": "ของใช้", "en": "Items"};
+        return {
+          "shn": "ၶွင်ၸႂ်ႉ",
+          "th": "ของใช้",
+          "en": "Items",
+          "mm": "ပစ္စည်းများ"
+        };
       case "ၼူမ်းလုၵ်ႈလႄႈၶွင်ၸႂ်ႉ":
         return {
           "shn": "ၼူမ်းလုၵ်ႈလႄႈၶွင်ၸႂ်ႉ",
           "th": "นมเด็กและของใช้",
-          "en": "Baby"
+          "en": "Baby",
+          "mm": "ကလေးနို့နှင့် အသုံးအဆောင်များ"
         };
       case "သိူဝ်ႈၽႃႈ":
-        return {"shn": "သိူဝ်ႈၽႃႈ", "th": "เสื้อผ้า", "en": "Clothes"};
+        return {"shn": "သိူဝ်ႈၽႃႈ", "th": "เสื้อผ้า", "en": "Clothes","mm":"အဝတ်"};
       case "တၢင်းၵိၼ်လဵၼ်ႈ":
-        return {"shn": "တၢင်းၵိၼ်လဵၼ်ႈ", "th": "ของว่าง", "en": "Snacks"};
+        return {"shn": "တၢင်းၵိၼ်လဵၼ်ႈ", "th": "ของว่าง", "en": "Snacks","mm":"အဆာပြေ"};
       case "ငိုၼ်းႁွမ်ၸူႉ":
-        return {"shn": "ငိုၼ်းႁွမ်ၸူႉ", "th": "เงินออม", "en": "Savings"};
+        return {"shn": "ငိုၼ်းႁွမ်ၸူႉ", "th": "เงินออม", "en": "Savings","mm":"စုဆောင်းငွေ"};
       case "ၵႃႈၼဵတ်ႇ":
-        return {"shn": "ၵႃႈၼဵတ်ႇ", "th": "ค่าเน็ต", "en": "Internet"};
+        return {"shn": "ၵႃႈၼဵတ်ႇ", "th": "ค่าเน็ต", "en": "Internet","mm":"အင်တာနက်"};
       case "ၵႃႈႁဵၼ်း":
-        return {"shn": "ၵႃႈႁဵၼ်း", "th": "การศึกษา", "en": "Education"};
+        return {"shn": "ၵႃႈႁဵၼ်း", "th": "การศึกษา", "en": "Education","mm":"ပညာရေး"};
       case "ထီႇ":
-        return {"shn": "ထီႇ", "th": "หวย", "en": "Lottery"};
+        return {"shn": "ထီႇ", "th": "หวย", "en": "Lottery","mm":"ထီ"};
       case "ပၢႆးယူႇလီ":
-        return {"shn": "ပၢႆးယူႇလီ", "th": "สุขภาพ", "en": "Health"};
+        return {"shn": "ပၢႆးယူႇလီ", "th": "สุขภาพ", "en": "Health","mm":"ကျန်းမာရေး"};
       case "ၵႃႈဢွၵ်ႇတၢင်း":
-        return {"shn": "ၵႃႈဢွၵ်ႇတၢင်း", "th": "ค่าเดินทาง", "en": "Transport"};
+        return {"shn": "ၵႃႈဢွၵ်ႇတၢင်း", "th": "ค่าเดินทาง", "en": "Transport","mm":"ခရီးစရိတ်"};
       case "ၽွၼ်ႇလူတ်ႉ":
-        return {"shn": "ၽွၼ်ႇလူတ်ႉ", "th": "ค่าผ่อนรถ", "en": "Installment"};
+        return {"shn": "ၽွၼ်ႇလူတ်ႉ", "th": "ค่าผ่อนรถ", "en": "Installment","mm":"ကားခများ"};
       case "ၶွင်ၶႂၼ်":
-        return {"shn": "ၶွင်ၶႂၼ်", "th": "ของขวัญ", "en": "Gift"};
+        return {"shn": "ၶွင်ၶႂၼ်", "th": "ของขวัญ", "en": "Gift","mm":"လက်ဆောင်"};
       case "ၵႃႈႁိူၼ်း":
-        return {"shn": "ၵႃႈႁိူၼ်း", "th": "ค่าบ้าน", "en": "Housing"};
+        return {"shn": "ၵႃႈႁိူၼ်း", "th": "ค่าบ้าน", "en": "Housing","mm":"အိမ်စရိတ်"};
       case "ၵႃႈၾႆးၾႃႉ":
-        return {"shn": "ၵႃႈၾႆးၾႃႉ", "th": "ค่าไฟฟ้า", "en": "Electricity"};
+        return {"shn": "ၵႃႈၾႆးၾႃႉ", "th": "ค่าไฟฟ้า", "en": "Electricity","mm":"လျှပ်စစ်မီတာခ"};
       case "ၵႃႈၼမ်ႉ":
-        return {"shn": "ၵႃႈၼမ်ႉ", "th": "ค่าน้ำ", "en": "Water"};
+        return {"shn": "ၵႃႈၼမ်ႉ", "th": "ค่าน้ำ", "en": "Water","mm":"ရေမီတာခ"};
       case "ၵႃႈႁႅင်း":
-        return {"shn": "ၵႃႈႁႅင်း", "th": "ค่าแรง", "en": "Wages"};
+        return {"shn": "ၵႃႈႁႅင်း", "th": "ค่าแรง", "en": "Wages","mm":"လုပ်အားခ"};
+      case "ၵႃႈၶၢတ်ႈႁိူၼ်း":
+        return {
+          "shn": "ၵႃႈၶၢတ်ႈႁိူၼ်း",
+          "th": "ค่าเช่าบ้าน",
+          "en": "House rent","mm":"အိမ်ငှားခ"
+        };
+      case "သႂ်ႇငိုၼ်းၽူင်း":
+        return {
+          "shn": "သႂ်ႇငိုၼ်းၽူင်း",
+          "th": "บัตรเติมเงิน",
+          "en": "prepaid card","mm":"ငွေဖြည့်ကတ်"
+        };
+      case "ၼမ်ႉမၼ်းလူတ်ႉ":
+        return {"shn": "ၼမ်ႉမၼ်းလူတ်ႉ", "th": "น้ำมันรถ", "en": "diesel","mm":"ဒီဇယ်"};
+      case "မႄးလူတ်ႉၶိူင်ႈ/ၵႃး":
+        return {
+          "shn": "မႄးလူတ်ႉၶိူင်ႈ/ၵႃး",
+          "th": "ซ่อมรถ",
+          "en": "Car repair","mm":"ကားပြုပြင်ခြင်း။"
+        };
       default:
-        return {"shn": category, "th": "อื่นๆ", "en": "Other"};
+        return {"shn": category, "th": "อื่นๆ", "en": "Other","mm":"တခြား"};
     }
   }
 
@@ -103,13 +136,15 @@ class _AddTransactionFormState extends State<AddTransactionForm> {
           'type': {
             "shn": _transactionType,
             "th": _transactionType == "ငိုၼ်းၶဝ်ႈ" ? "รายรับ" : "รายจ่าย",
-            "en": _transactionType == "ငိုၼ်းၶဝ်ႈ" ? "Income" : "Expense"
+            "en": _transactionType == "ငိုၼ်းၶဝ်ႈ" ? "Income" : "Expense",
+            "mm": _transactionType == "ငိုၼ်းၶဝ်ႈ" ? "ဝင်ငွေ" : "ကုန်ကျစရိတ်"
           },
           'category': _getTranslatedCategory(_category),
           'title': {
             "shn": _title,
             "th": _title,
             "en": _title,
+            "mm": _title,
           },
           'amount': _amount,
           'date': _selectedDate,
@@ -172,7 +207,7 @@ class _AddTransactionFormState extends State<AddTransactionForm> {
                       filled: true,
                       // fillColor: Colors.grey[200],
                     ),
-                    items: ['ငိုၼ်းၶဝ်ႈ', 'ငိုၼ်းဢွၵ်ႇ']
+                    items: ['ငိုၼ်းၶဝ်ႈ', 'ငိုၼ်းဢွၵ်ႇ',]
                         .map((type) => DropdownMenuItem(
                               value: type,
                               child: Text(
@@ -216,7 +251,11 @@ class _AddTransactionFormState extends State<AddTransactionForm> {
                       'ၵႃႈႁိူၼ်း',
                       'ၵႃႈၾႆးၾႃႉ',
                       'ၵႃႈၼမ်ႉ',
-                      'ၵႃႈႁႅင်း'
+                      'ၵႃႈႁႅင်း',
+                      'ၵႃႈၶၢတ်ႈႁိူၼ်း',
+                      'သႂ်ႇငိုၼ်းၽူင်း',
+                      'ၼမ်ႉမၼ်းလူတ်ႉ',
+                      'မႄးလူတ်ႉၶိူင်ႈ/ၵႃး',
                     ]
                         .map((category) => DropdownMenuItem(
                               value: category,

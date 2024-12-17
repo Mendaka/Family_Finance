@@ -181,28 +181,7 @@ Future<Map<String, dynamic>> _getUserData() async {
             ),
           ),
           const Divider(),
-          ListTile(
-  title: Text(
-    AppTranslations.getText('Profile', currentLanguage),
-    style: const TextStyle(
-      fontSize: 16,
-      fontWeight: FontWeight.w500,
-      fontFamily: "Raleway",
-    ),
-  ),
-  trailing: const Icon(Icons.person, color: Colors.blue),
-  onTap: () {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => ProfilePageContent(
-          () => _getUserData(),
-          logout, // ฟังก์ชัน logout ที่ใช้ใน ProfilePage
-        ),
-      ),
-    );
-  },
-),
+       
 
           ListTile(
             title: Text(

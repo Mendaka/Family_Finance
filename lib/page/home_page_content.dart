@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:collection/collection.dart';
 import 'package:family_finance/language/app_translations.dart';
 import 'package:family_finance/language/locale_provider.dart';
 import 'package:family_finance/page/currency_provider.dart';
@@ -18,6 +19,7 @@ class HomePageContent extends StatefulWidget {
 }
 
 class _HomePageContentState extends State<HomePageContent> {
+  
   @override
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser;
@@ -55,8 +57,7 @@ class _HomePageContentState extends State<HomePageContent> {
                   NumberFormat('#,##0.00').format(totalIncome);
               final formattedExpense =
                   NumberFormat('#,##0.00').format(totalExpense);
-              final formattedBalance =
-                  NumberFormat('#,##0.00').format(balance);
+              final formattedBalance = NumberFormat('#,##0.00').format(balance);
 
               return Column(
                 children: [
@@ -80,7 +81,7 @@ class _HomePageContentState extends State<HomePageContent> {
                       children: [
                         ListTile(
                           title: Text(
-                            AppTranslations.getText('available amount', currentLanguage),
+                            AppTranslations.getText('income', currentLanguage),
                             style: const TextStyle(
                               fontSize: 15,
                               color: Colors.white,
@@ -161,93 +162,118 @@ class _HomePageContentState extends State<HomePageContent> {
                 .where('userId', isEqualTo: user?.uid)
                 .orderBy('date', descending: true)
                 .snapshots(),
-          
-builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-  if (!snapshot.hasData) {
-    return const Center(child: CircularProgressIndicator());
-  }
-  if (snapshot.data!.docs.isEmpty) {
-    return const Center(child: Text('No transactions found'));
-  }
+            builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+              if (!snapshot.hasData) {
+                return const Center(child: CircularProgressIndicator());
+              }
+              if (snapshot.data!.docs.isEmpty) {
+                return const Center(child: Text('No transactions found'));
+              }
 
-  final transactions = snapshot.data!.docs;
+              final transactions = snapshot.data!.docs
+                  .map((doc) => doc.data() as Map<String, dynamic>)
+                  .toList();
 
-  return ListView.builder(
-    itemCount: transactions.length,
-    itemBuilder: (context, index) {
-      final transaction = transactions[index].data() as Map<String, dynamic>;
-      final title = transaction['title'][currentLanguage]?.toString() ?? 'No title';
-      final amount = (transaction['amount'] ?? 0).toDouble();
-      final time = DateFormat('HH:mm').format((transaction['date'] as Timestamp).toDate());
-      final type = transaction['type'][currentLanguage]?.toString() ?? '';
+              // จัดกลุ่มธุรกรรมตามวันที่
+              final groupedTransactions = groupBy(
+                transactions,
+                (transaction) => DateFormat('yyyy-MM-dd')
+                    .format((transaction['date'] as Timestamp).toDate()),
+              );
 
+              final sortedKeys = groupedTransactions.keys.toList()
+                ..sort((a, b) => b.compareTo(a));
 
-      // กำหนดสีตามประเภท
-      final isIncome = type == AppTranslations.getText('income', currentLanguage);
-      final color = isIncome ? Colors.green : Colors.red;
+              return ListView.builder(
+                itemCount: groupedTransactions.length,
+                itemBuilder: (context, index) {
+                  final date = sortedKeys[index];
+                  final dailyTransactions = groupedTransactions[date]!;
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // แสดงวันที่
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          DateFormat('dd MMM yyyy')
+                              .format(DateTime.parse(date)),
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      // แสดงรายการในวันนั้น
+                      ...dailyTransactions.map((transaction) {
+                        final title =
+                            transaction['title'][currentLanguage]?.toString() ??
+                                'No title';
+                        final amount = (transaction['amount'] ?? 0).toDouble();
+                        final time = DateFormat('HH:mm').format(
+                            (transaction['date'] as Timestamp).toDate());
+                        final type =
+                            transaction['type'][currentLanguage]?.toString() ??
+                                '';
+                        final isIncome = type ==
+                            AppTranslations.getText('income', currentLanguage);
+                        final color = isIncome ? Colors.green : Colors.red;
 
-      return Card(
-  margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-  shape: RoundedRectangleBorder(
-    borderRadius: BorderRadius.circular(12),
-  ),
-  elevation: 3,
-  child: ListTile(
-    title: Text(
-      title,
-      style: TextStyle(
-        color: type == 'Income' || type == 'ငိုၼ်းၶဝ်ႈ' || type == 'รายรับ'
-            ? Colors.green
-            : Colors.red,
-        fontFamily: "Raleway",
-        fontWeight: FontWeight.bold,
-        fontSize: 18,
-      ),
-    ),
-    subtitle: Text(
-      '${AppTranslations.getText('time', currentLanguage)}: $time',
-    ),
-    trailing: Column(
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: [
-        Text(
-          AppTranslations.getText(
-            type == 'Income' || type == 'ငိုၼ်းၶဝ်ႈ' || type == 'รายรับ'
-                ? 'income'
-                : 'expense',
-            currentLanguage,
+                        return Card(
+                          margin: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 4),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          elevation: 3,
+                          child: ListTile(
+                            title: Text(
+                              title,
+                              style: TextStyle(
+                                color: color,
+                                fontFamily: "Raleway",
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18,
+                              ),
+                            ),
+                            subtitle: Text(
+                              '${AppTranslations.getText('time', currentLanguage)}: $time',
+                            ),
+                            trailing: Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Text(
+                                  AppTranslations.getText(
+                                    isIncome ? 'income' : 'expense',
+                                    currentLanguage,
+                                  ),
+                                  style: TextStyle(
+                                    color: color,
+                                    fontFamily: "Raleway",
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                                Text(
+                                  '${amount.toStringAsFixed(2)} $currencySymbol',
+                                  style: TextStyle(
+                                    color: color,
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                    ],
+                  );
+                },
+              );
+            },
           ),
-          style: TextStyle(
-            color: type == 'Income' || type == 'ငိုၼ်းၶဝ်ႈ' || type == 'รายรับ'
-                ? Colors.green
-                : Colors.red,
-            fontFamily: "Raleway",
-            fontSize: 12,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        Text(
-          '${amount.toStringAsFixed(2)} $currencySymbol',
-          style: TextStyle(
-            color: type == 'Income' || type == 'ငိုၼ်းၶဝ်ႈ' || type == 'รายรับ'
-                ? Colors.green
-                : Colors.red,
-            fontSize: 15,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ],
-    ),
-  ),
-);
-
-
-    },
-  );
-},
-
-          ),
-        ),
+        )
       ],
     );
   }

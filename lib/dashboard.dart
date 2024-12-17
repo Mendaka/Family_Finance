@@ -1,5 +1,6 @@
 import 'package:family_finance/language/app_translations.dart';
 import 'package:family_finance/language/locale_provider.dart';
+import 'package:family_finance/page/custom_drawer.dart';
 import 'package:family_finance/page/home_page_content.dart';
 import 'package:family_finance/page/monthly_summart_page.dart';
 
@@ -7,6 +8,7 @@ import 'package:family_finance/page/profile_page_content.dart';
 import 'package:family_finance/page/setting_page.dart';
 import 'package:family_finance/page/transactions_bar_chart.dart';
 import 'package:family_finance/theme/theme_provider.dart';
+import 'package:family_finance/widget/alert_popup.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -58,11 +60,11 @@ class _HomeScreenState extends State<HomeScreen> {
         final double amount = (data['amount'] ?? 0).toDouble();
 
         // ตรวจสอบว่าเป็นรายรับหรือรายจ่าย
-        if (type == 'รายรับ' || type == 'Income' || type == 'ငိုၼ်းၶဝ်ႈ') {
+        if (type == 'รายรับ' || type == 'Income' || type == 'ငိုၼ်းၶဝ်ႈ'|| type == 'ဝင်ငွေ') {
           totalIncome += amount;
         } else if (type == 'รายจ่าย' ||
             type == 'Expense' ||
-            type == 'ငိုၼ်းဢွၵ်ႇ') {
+            type == 'ငိုၼ်းဢွၵ်ႇ'|| type == 'ကုန်ကျစရိတ်') {
           totalExpense += amount;
         }
 
@@ -92,73 +94,146 @@ class _HomeScreenState extends State<HomeScreen> {
     return {};
   }
 
-  Future<Map<String, dynamic>> _getMonthlySummary(
-      String currentLanguage) async {
-    final user = _auth.currentUser;
-    if (user != null) {
-      final now = DateTime.now();
-      final startOfMonth = DateTime(now.year, now.month, 1);
-      final startOfLastMonth = DateTime(now.year, now.month - 1, 1);
-      final endOfLastMonth = DateTime(now.year, now.month, 0);
+ Future<Map<String, dynamic>> _getMonthlySummary(
+    String currentLanguage) async {
+  final user = _auth.currentUser;
+  if (user != null) {
+    final now = DateTime.now();
+    final startOfMonth = DateTime(now.year, now.month, 1);
+    final startOfLastMonth = DateTime(now.year, now.month - 1, 1);
+    final endOfLastMonth = DateTime(now.year, now.month, 0);
 
-      double totalIncome = 0.0;
-      double totalExpense = 0.0;
-      double lastMonthExpense = 0.0;
+    double totalIncome = 0.0;
+    double totalExpense = 0.0;
+    double lastMonthExpense = 0.0;
 
-      // คำนวณข้อมูลของเดือนปัจจุบัน
-      final snapshot = await _firestore
-          .collection('transactions')
-          .where('userId', isEqualTo: user.uid)
-          .where('date', isGreaterThanOrEqualTo: startOfMonth)
-          .get();
+    // กำหนดช่วงเวลา
+    final todayStart = DateTime(
+      DateTime.now().year,
+      DateTime.now().month,
+      DateTime.now().day,
+    );
+    final yesterdayStart = todayStart.subtract(Duration(days: 1));
+    final todayEnd = todayStart.add(Duration(days: 1));
 
-      for (var doc in snapshot.docs) {
-        final data = doc.data();
-        final double amount = (data['amount'] ?? 0.0).toDouble();
-        final String type = (data['type'] ?? {})[currentLanguage]?.toString() ??
-            (data['type'] ?? {})['en']?.toString() ??
-            '';
+    // ดึงข้อมูลวันนี้
+    final todaySnapshot = await _firestore
+        .collection('transactions')
+        .where('userId', isEqualTo: user.uid)
+        .where('date', isGreaterThanOrEqualTo: todayStart)
+        .where('date', isLessThan: todayEnd)
+        .get();
 
-        if (type == 'รายรับ' || type == 'Income' || type == 'ငိုၼ်းၶဝ်ႈ') {
-          totalIncome += amount;
-        } else if (type == 'รายจ่าย' ||
-            type == 'Expense' ||
-            type == 'ငိုၼ်းဢွၵ်ႇ') {
-          totalExpense += amount;
-        }
+    double todayIncome = 0.0;
+    double todayExpense = 0.0;
+
+    for (var doc in todaySnapshot.docs) {
+      final data = doc.data();
+      final double amount = (data['amount'] ?? 0.0).toDouble();
+      final String type = (data['type'] ?? {})[currentLanguage]?.toString() ??
+          (data['type'] ?? {})['en']?.toString() ??
+          '';
+
+      if (type == 'รายรับ' || type == 'Income' || type == 'ငိုၼ်းၶဝ်ႈ'|| type == 'ဝင်ငွေ') {
+        todayIncome += amount;
+      } else if (type == 'รายจ่าย' ||
+          type == 'Expense' ||
+          type == 'ငိုၼ်းဢွၵ်ႇ'||type == 'ကုန်ကျစရိတ်') {
+        todayExpense += amount;
       }
-
-      // คำนวณข้อมูลของเดือนที่แล้ว
-      final lastMonthSnapshot = await _firestore
-          .collection('transactions')
-          .where('userId', isEqualTo: user.uid)
-          .where('date', isGreaterThanOrEqualTo: startOfLastMonth)
-          .where('date', isLessThanOrEqualTo: endOfLastMonth)
-          .get();
-
-      for (var doc in lastMonthSnapshot.docs) {
-        final data = doc.data();
-        final double amount = (data['amount'] ?? 0.0).toDouble();
-        final String type = (data['type'] ?? {})[currentLanguage]?.toString() ??
-            (data['type'] ?? {})['en']?.toString() ??
-            '';
-
-        if (type == 'รายจ่าย' || type == 'Expense' || type == 'ငိုၼ်းဢွၵ်ႇ') {
-          lastMonthExpense += amount;
-        }
-      }
-
-      double balance = totalIncome - totalExpense;
-
-      return {
-        'totalIncome': totalIncome,
-        'totalExpense': totalExpense,
-        'balance': balance,
-        'lastMonthExpense': lastMonthExpense, // ส่งค่ารายจ่ายเดือนที่แล้ว
-      };
     }
-    return {};
+
+    // ดึงข้อมูลเมื่อวาน
+    final yesterdaySnapshot = await _firestore
+        .collection('transactions')
+        .where('userId', isEqualTo: user.uid)
+        .where('date', isGreaterThanOrEqualTo: yesterdayStart)
+        .where('date', isLessThan: todayStart)
+        .get();
+
+    double yesterdayIncome = 0.0;
+    double yesterdayExpense = 0.0;
+
+    for (var doc in yesterdaySnapshot.docs) {
+      final data = doc.data();
+      final double amount = (data['amount'] ?? 0.0).toDouble();
+      final String type = (data['type'] ?? {})[currentLanguage]?.toString() ??
+          (data['type'] ?? {})['en']?.toString() ??
+          '';
+
+      if (type == 'รายรับ' || type == 'Income' || type == 'ငိုၼ်းၶဝ်ႈ'|| type == 'ဝင်ငွေ') {
+        yesterdayIncome += amount;
+      } else if (type == 'รายจ่าย' ||
+          type == 'Expense' ||
+          type == 'ငိုၼ်းဢွၵ်ႇ'||type == 'ကုန်ကျစရိတ်') {
+        yesterdayExpense += amount;
+      }
+    }
+
+    print('Today Income: $todayIncome');
+    print('Today Expense: $todayExpense');
+    print('Yesterday Income: $yesterdayIncome');
+    print('Yesterday Expense: $yesterdayExpense');
+
+    // คำนวณข้อมูลของเดือนปัจจุบัน
+    final snapshot = await _firestore
+        .collection('transactions')
+        .where('userId', isEqualTo: user.uid)
+        .where('date', isGreaterThanOrEqualTo: startOfMonth)
+        .get();
+
+    for (var doc in snapshot.docs) {
+      final data = doc.data();
+      final double amount = (data['amount'] ?? 0.0).toDouble();
+      final String type = (data['type'] ?? {})[currentLanguage]?.toString() ??
+          (data['type'] ?? {})['en']?.toString() ??
+          '';
+
+      if (type == 'รายรับ' || type == 'Income' || type == 'ငိုၼ်းၶဝ်ႈ'|| type == 'ဝင်ငွေ') {
+        totalIncome += amount;
+      } else if (type == 'รายจ่าย' ||
+          type == 'Expense' ||
+          type == 'ငိုၼ်းဢွၵ်ႇ'||type == 'ကုန်ကျစရိတ်') {
+        totalExpense += amount;
+      }
+    }
+
+    // คำนวณข้อมูลของเดือนที่แล้ว
+    final lastMonthSnapshot = await _firestore
+        .collection('transactions')
+        .where('userId', isEqualTo: user.uid)
+        .where('date', isGreaterThanOrEqualTo: startOfLastMonth)
+        .where('date', isLessThanOrEqualTo: endOfLastMonth)
+        .get();
+
+    for (var doc in lastMonthSnapshot.docs) {
+      final data = doc.data();
+      final double amount = (data['amount'] ?? 0.0).toDouble();
+      final String type = (data['type'] ?? {})[currentLanguage]?.toString() ??
+          (data['type'] ?? {})['en']?.toString() ??
+          '';
+
+      if (type == 'รายจ่าย' || type == 'Expense' || type == 'ငိုၼ်းဢွၵ်ႇ'||type == 'ကုန်ကျစရိတ်') {
+        lastMonthExpense += amount;
+      }
+    }
+
+    double balance = totalIncome - totalExpense;
+
+    return {
+      'totalIncome': totalIncome,
+      'totalExpense': totalExpense,
+      'balance': balance,
+      'lastMonthExpense': lastMonthExpense, // ส่งค่ารายจ่ายเดือนที่แล้ว
+      'todayIncome': todayIncome, // ส่งค่ารายรับวันนี้
+      'todayExpense': todayExpense, // ส่งค่ารายจ่ายวันนี้
+      'yesterdayIncome': yesterdayIncome, // ส่งค่ารายรับเมื่อวาน
+      'yesterdayExpense': yesterdayExpense, // ส่งค่ารายจ่ายเมื่อวาน
+    };
   }
+  return {};
+}
+
 
   Future<Map<String, dynamic>> _getUserData() async {
     final user = _auth.currentUser;
@@ -184,6 +259,15 @@ class _HomeScreenState extends State<HomeScreen> {
     final email = prefs.getString('userEmail') ?? "";
     print("Dashboard - Current Email: $email"); // ตรวจสอบอีเมล
   }
+
+
+   @override
+void initState() {
+  super.initState();
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    AlertPopup.showAlertIfFirstLaunch(context);
+  });
+}
 
   @override
   Widget build(BuildContext context) {
@@ -216,6 +300,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 value: 'shn',
                 child: Text('ၽႃႇသႃႇတႆး'),
               ),
+               const PopupMenuItem(
+                value: 'mm',
+                child: Text('မြန်မာဘာသာ'),
+              ),
             ],
           ),
           IconButton(
@@ -230,6 +318,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
+      drawer: CustomDrawer(),
       body: SafeArea(
         child: _selectedIndex == 0
             ? HomePageContent(
@@ -299,12 +388,25 @@ class _HomeScreenState extends State<HomeScreen> {
                           final double balance =
                               (totals['balance'] ?? 0).toDouble();
 
+                          // ตรวจสอบว่าได้ประกาศตัวแปรก่อนหน้านี้หรือยัง
+                          double todayIncome = 0.0;
+                          double todayExpense = 0.0;
+                          double yesterdayIncome = 0.0;
+                          double yesterdayExpense = 0.0;
+
                           return MonthlySummaryPage(
                             income: totals['totalIncome'],
                             expense: totals['totalExpense'],
                             balance: totals['balance'],
-                            lastMonthExpense: totals[
-                                'lastMonthExpense'], // ส่งค่ารายจ่ายเดือนที่แล้ว
+                            lastMonthExpense: totals['lastMonthExpense'],
+                            todayIncome:
+                                totals['todayIncome'], // ใช้ค่าที่คำนวณได้
+                            todayExpense:
+                                totals['todayExpense'], // ใช้ค่าที่คำนวณได้
+                            yesterdayIncome:
+                                totals['yesterdayIncome'], // ใช้ค่าที่คำนวณได้
+                            yesterdayExpense:
+                                totals['yesterdayExpense'], // ใช้ค่าที่คำนวณได้
                           );
                         },
                       )

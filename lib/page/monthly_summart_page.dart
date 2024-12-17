@@ -9,14 +9,22 @@ class MonthlySummaryPage extends StatelessWidget {
   final double income;
   final double expense;
   final double balance;
-  final double lastMonthExpense; // เพิ่มพารามิเตอร์ใหม่
+  final double lastMonthExpense;
+  final double todayIncome; // รายรับวันนี้
+  final double todayExpense; // รายจ่ายวันนี้
+  final double yesterdayIncome; // รายรับเมื่อวาน
+  final double yesterdayExpense; // รายจ่ายเมื่อวาน
 
   const MonthlySummaryPage({
     super.key,
-    required this.income,
-    required this.expense,
-    required this.balance,
-    required this.lastMonthExpense, // รับพารามิเตอร์ใหม่
+   required this.income,
+  required this.expense,
+  required this.balance,
+  required this.lastMonthExpense,
+  required this.todayIncome,
+  required this.todayExpense,
+  required this.yesterdayIncome,
+  required this.yesterdayExpense,
   });
 
   @override
@@ -26,14 +34,22 @@ class MonthlySummaryPage extends StatelessWidget {
     final currentLanguage =
         Provider.of<LocaleProvider>(context).currentLanguage;
 
-    // คำนวณการเปรียบเทียบรายจ่ายเดือนนี้กับเดือนที่แล้ว
-    final difference = expense - lastMonthExpense;
-    final comparisonText = difference > 0
-        ? AppTranslations.getText('This month more than last month', currentLanguage)
-        : AppTranslations.getText('This month less than last month', currentLanguage);
+    // คำนวณความแตกต่างของรายรับและรายจ่ายวันนี้กับเมื่อวาน
+    final incomeDifference = todayIncome - yesterdayIncome;
+    final expenseDifference = todayExpense - yesterdayExpense;
 
-    final formattedDifference =
-        NumberFormat('#,##0.00').format(difference.abs());
+    final incomeComparisonText = incomeDifference > 0
+        ? AppTranslations.getText('Today more income than yesterday', currentLanguage)
+        : AppTranslations.getText('Today less income than yesterday', currentLanguage);
+
+    final expenseComparisonText = expenseDifference > 0
+        ? AppTranslations.getText('Today more expense than yesterday', currentLanguage)
+        : AppTranslations.getText('Today less expense than yesterday', currentLanguage);
+
+    final formattedIncomeDifference =
+        NumberFormat('#,##0.00').format(incomeDifference.abs());
+    final formattedExpenseDifference =
+        NumberFormat('#,##0.00').format(expenseDifference.abs());
 
     return SingleChildScrollView(
       child: Padding(
@@ -77,10 +93,31 @@ class MonthlySummaryPage extends StatelessWidget {
             _buildSummaryCard(
               icon: Icons.compare_arrows,
               label: AppTranslations.getText('comparison with last month', currentLanguage),
-              amount: difference,
-              color: difference > 0 ? Colors.red : Colors.green,
+              amount: expense - lastMonthExpense,
+              color: (expense - lastMonthExpense) > 0 ? Colors.red : Colors.green,
               currencySymbol: currencySymbol,
-              extraText: '$comparisonText: $formattedDifference $currencySymbol',
+              extraText:
+                  '${AppTranslations.getText('comparison with last month', currentLanguage)}: ${NumberFormat('#,##0.00').format((expense - lastMonthExpense).abs())} $currencySymbol',
+            ),
+            const SizedBox(height: 10),
+            // การ์ดเปรียบเทียบรายรับวันนี้กับเมื่อวาน
+            _buildSummaryCard(
+              icon: Icons.arrow_forward,
+              label: AppTranslations.getText('Income comparison today vs yesterday', currentLanguage),
+              amount: incomeDifference,
+              color: incomeDifference > 0 ? Colors.green : Colors.red,
+              currencySymbol: currencySymbol,
+              extraText: '$incomeComparisonText: $formattedIncomeDifference $currencySymbol',
+            ),
+            const SizedBox(height: 10),
+            // การ์ดเปรียบเทียบรายจ่ายวันนี้กับเมื่อวาน
+            _buildSummaryCard(
+              icon: Icons.arrow_back,
+              label: AppTranslations.getText('Expense comparison today vs yesterday', currentLanguage),
+              amount: expenseDifference,
+              color: expenseDifference > 0 ? Colors.red : Colors.green,
+              currencySymbol: currencySymbol,
+              extraText: '$expenseComparisonText: $formattedExpenseDifference $currencySymbol',
             ),
           ],
         ),

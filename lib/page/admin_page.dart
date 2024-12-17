@@ -124,7 +124,7 @@ class UsersList extends StatelessWidget {
 
   Stream<List<Map<String, dynamic>>> _getUsersData() {
     return _firestore.collection('users').snapshots().map((snapshot) {
-      return snapshot.docs.map((doc) => doc.data() as Map<String, dynamic>).toList();
+      return snapshot.docs.map((doc) => doc.data()).toList();
     });
   }
 

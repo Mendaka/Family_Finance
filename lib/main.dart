@@ -3,55 +3,61 @@ import 'package:family_finance/page/admin_page.dart';
 import 'package:family_finance/page/currency_provider.dart';
 import 'package:family_finance/page/login_screen.dart';
 import 'package:family_finance/page/singup_screen.dart';
+import 'package:family_finance/page/splash_screen.dart';
 import 'package:family_finance/theme/theme_provider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+
 import 'dashboard.dart';
 
 Future<bool> checkLoginStatus() async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  return prefs.getBool('isLoggedIn') ?? false;
+  // ใช้ Firebase Authentication เพื่อตรวจสอบสถานะผู้ใช้
+  User? user = FirebaseAuth.instance.currentUser;
+  return user != null;
 }
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
 
-  bool isLoggedIn = await checkLoginStatus();
-
   runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider(create: (_) => CurrencyProvider()),
-      ChangeNotifierProvider(create: (_) => ThemeProvider()), // เพิ่ม ThemeProvider
-      ChangeNotifierProvider(create: (_) => LocaleProvider()), // เพิ่ม LocaleProvider
+      ChangeNotifierProvider(create: (_) => ThemeProvider()),
+      ChangeNotifierProvider(create: (_) => LocaleProvider()),
     ],
-    child: MyApp(isLoggedIn: isLoggedIn),
+    child: MyApp(),
   ));
 }
 
 class MyApp extends StatelessWidget {
-  final bool isLoggedIn;
-
-  const MyApp({super.key, required this.isLoggedIn});
-
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
-    return 
-    MaterialApp(
+    return MaterialApp(
       title: 'Family Finance',
-     theme: ThemeData.light(),
+      theme: ThemeData.light(),
       darkTheme: ThemeData.dark(),
-      themeMode: themeProvider.themeMode, // ใช้ ThemeMode จาก ThemeProvider
+      themeMode: themeProvider.themeMode,
       debugShowCheckedModeBanner: false,
-      initialRoute: isLoggedIn ? '/dashboard' : '/login',
-      routes: {
-        '/signup': (context) => const SignupScreen(),
-        '/login': (context) => const LoginScreen(),
-        '/dashboard': (context) => const HomeScreen(),
-        '/admin': (context) => AdminPage(), // เส้นทางสำหรับหน้า Admin
+      initialRoute: '/splash',
+      onGenerateRoute: (settings) {
+        switch (settings.name) {
+          case '/splash':
+            return MaterialPageRoute(builder: (context) => SplashScreen());
+          case '/signup':
+            return MaterialPageRoute(builder: (context) => const SignupScreen());
+          case '/login':
+            return MaterialPageRoute(builder: (context) => const LoginScreen());
+          case '/dashboard':
+            return MaterialPageRoute(builder: (context) => const HomeScreen());
+          case '/admin':
+            return MaterialPageRoute(builder: (context) => AdminPage());
+          default:
+            return MaterialPageRoute(builder: (context) => const LoginScreen());
+        }
       },
     );
   }
