@@ -21,7 +21,7 @@ class _AddTransactionFormState extends State<AddTransactionForm> {
   String _category = 'ၶဝ်ႈၽၵ်း'; // ค่าเริ่มต้น
   String _title = '';
   double _amount = 0.0;
-  final DateTime _selectedDate = DateTime.now();
+  DateTime? _selectedDate; // วันที่ที่เลือก
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
@@ -119,8 +119,29 @@ class _AddTransactionFormState extends State<AddTransactionForm> {
           "th": "ซ่อมรถ",
           "en": "Car repair","mm":"ကားပြုပြင်ခြင်း။"
         };
+          case "ႁဵတ်းၵုသူဝ်ႇ":
+        return {
+          "shn": "ႁဵတ်းၵုသူဝ်ႇ",
+          "th": "ทำบุญ/บริจาก",
+          "en": "donate","mm":"ကုသိုလ်/လှူဒါန်း"
+        };
       default:
         return {"shn": category, "th": "อื่นๆ", "en": "Other","mm":"တခြား"};
+    }
+  }
+
+  // ฟังก์ชันเลือกวันที่
+  Future<void> _pickDate() async {
+    DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: _selectedDate ?? DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2100),
+    );
+    if (pickedDate != null) {
+      setState(() {
+        _selectedDate = pickedDate;
+      });
     }
   }
 
@@ -147,7 +168,7 @@ class _AddTransactionFormState extends State<AddTransactionForm> {
             "mm": _title,
           },
           'amount': _amount,
-          'date': _selectedDate,
+          'date': _selectedDate ?? DateTime.now(), // ใช้วันที่ปัจจุบันหากไม่ได้เลือกวันที่
         });
 
         widget.onTransactionAdded();
@@ -157,6 +178,10 @@ class _AddTransactionFormState extends State<AddTransactionForm> {
           const SnackBar(content: Text('กรุณาเข้าสู่ระบบก่อนเพิ่มรายการ')),
         );
       }
+    }else if (_selectedDate == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('กรุณาเลือกวันที่')),
+      );
     }
   }
 
@@ -191,7 +216,7 @@ class _AddTransactionFormState extends State<AddTransactionForm> {
                       style: const TextStyle(
                         fontSize: 22,
                         fontWeight: FontWeight.bold,
-                        fontFamily: "Raleway",
+                        fontFamily: "RobotoMono",
                       ),
                     ),
                   ),
@@ -256,6 +281,8 @@ class _AddTransactionFormState extends State<AddTransactionForm> {
                       'သႂ်ႇငိုၼ်းၽူင်း',
                       'ၼမ်ႉမၼ်းလူတ်ႉ',
                       'မႄးလူတ်ႉၶိူင်ႈ/ၵႃး',
+                      'ႁဵတ်းၵုသူဝ်ႇ',
+
                     ]
                         .map((category) => DropdownMenuItem(
                               value: category,
@@ -303,6 +330,25 @@ class _AddTransactionFormState extends State<AddTransactionForm> {
                         _amount = double.tryParse(value) ?? 0.0,
                     validator: (value) =>
                         value!.isEmpty ? 'กรุณากรอกจำนวนเงิน' : null,
+                  ),
+                  const SizedBox(height: 12),
+                   // เพิ่มปุ่มเลือกวันที่
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        _selectedDate != null
+                            ? '${_selectedDate!.toLocal()}'.split(' ')[0]
+                            : AppTranslations.getText(
+                                'Date', currentLanguage),
+                        style: TextStyle(fontSize: 16),
+                      ),
+                      ElevatedButton(
+                        onPressed: _pickDate,
+                        child: Text(AppTranslations.getText(
+                            'Choose a date', currentLanguage)),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 16),
                   Center(

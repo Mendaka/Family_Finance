@@ -17,44 +17,29 @@ class _SignupScreenState extends State<SignupScreen> {
   String _name = '';
   String _email = '';
   String _password = '';
-  String _familyCode = '';
 
   Future<void> _signup() async {
     try {
-      // ตรวจสอบว่า familyCode ไม่ซ้ำก่อนทำการสมัครสมาชิก
-      bool isFamilyCodeUnique = await _isFamilyCodeUnique(_familyCode);
-      if (!isFamilyCodeUnique) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('โค้ดครอบครัวนี้มีอยู่แล้ว กรุณากรอกโค้ดใหม่')),
-        );
-        return;
-      }
-
-      // สร้างผู้ใช้ใหม่ใน Firebase Authentication
+      // Create a new user in Firebase Authentication
       UserCredential userCredential =
           await _auth.createUserWithEmailAndPassword(
         email: _email,
         password: _password,
       );
 
-      // บันทึกข้อมูลผู้ใช้ใน Firestore รวมถึงโค้ดครอบครัว
+      // Save user information to Firestore
       await _firestore.collection('users').doc(userCredential.user!.uid).set({
         'name': _name,
         'email': _email,
-        'familyCode': _familyCode,
         'createdAt': DateTime.now(),
       });
 
+      // Navigate to the login page
       Navigator.pushReplacementNamed(context, '/login');
     } catch (e) {
       ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(e.toString())));
+          .showSnackBar(SnackBar(content: Text('An error occurred: ${e.toString()}')));
     }
-  }
-
-  Future<bool> _isFamilyCodeUnique(String code) async {
-    final snapshot = await _firestore.collection('families').doc(code).get();
-    return !snapshot.exists;
   }
 
   @override
@@ -103,7 +88,7 @@ class _SignupScreenState extends State<SignupScreen> {
                             value!.isEmpty ? 'Please enter your name' : null,
                       ),
                       const SizedBox(height: 12),
-                      TextFormField(
+                       TextFormField(
                         decoration: InputDecoration(
                           labelText: 'Email',
                           border: OutlineInputBorder(
@@ -129,29 +114,8 @@ class _SignupScreenState extends State<SignupScreen> {
                         obscureText: true,
                         onChanged: (value) => _password = value,
                         validator: (value) => value!.length < 6
-                            ? 'Password must be at least 6 characters'
+                            ? 'Password must be at least 6 characters long'
                             : null,
-                      ),
-                      const SizedBox(height: 12),
-                      TextFormField(
-                        decoration: InputDecoration(
-                          labelText: 'Family Code',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          filled: true,
-                          fillColor: Colors.grey[200],
-                        ),
-                        onChanged: (value) => _familyCode = value,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter a family code';
-                          }
-                          if (!RegExp(r'^FF\d{6}$').hasMatch(value)) {
-                            return 'Family code must start with "FF" followed by 6 digits';
-                          }
-                          return null;
-                        },
                       ),
                       const SizedBox(height: 20),
                       ElevatedButton(

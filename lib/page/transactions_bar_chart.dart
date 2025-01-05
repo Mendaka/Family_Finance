@@ -47,7 +47,7 @@ class TransactionsBarChart extends StatelessWidget {
               style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
-                  fontFamily: "Raleway")),
+                  fontFamily: "RobotoMono")),
           const SizedBox(height: 20),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -65,14 +65,14 @@ class TransactionsBarChart extends StatelessWidget {
               style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
-                  fontFamily: "Raleway")),
+                  fontFamily: "RobotoMono")),
           const SizedBox(height: 20),
           categories.isEmpty
               ? const Text('No category data available',
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
-                    fontFamily: "Raleway",
+                    fontFamily: "RobotoMono",
                   )) // กรณีไม่มีข้อมูล
               : SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
@@ -120,9 +120,9 @@ class TransactionsBarChart extends StatelessWidget {
         const SizedBox(height: 8),
         Text(label,
             style: const TextStyle(
-                fontSize: 10,
-                fontWeight: FontWeight.bold,
-                fontFamily: "Raleway")),
+                fontSize: 14,
+                
+                fontFamily: "RobotoMono")),
         const SizedBox(height: 20),
       ],
     );

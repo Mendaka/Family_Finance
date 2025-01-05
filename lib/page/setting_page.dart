@@ -157,20 +157,20 @@ Future<Map<String, dynamic>> _getUserData() async {
               style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
-                fontFamily: "Raleway",
+                 fontFamily: "RobotoMono",
                 color: Colors.black87,
               ),
             ),
           ),
           const Divider(),
           ListTile(
-            title: Text( AppTranslations.getText('Select currency', currentLanguage),),
+            title: Text( AppTranslations.getText('Select currency', currentLanguage),style: TextStyle( fontFamily: "RobotoMono",),),
             trailing: DropdownButton<String>(
               value: _selectedCurrency,
               items: ['฿', '\$', 'K', '¥'].map((String value) {
                 return DropdownMenuItem<String>(
                   value: value,
-                  child: Text(value),
+                  child: Text(value,style: TextStyle( fontFamily: "RobotoMono",),),
                 );
               }).toList(),
               onChanged: (newValue) {
@@ -189,7 +189,7 @@ Future<Map<String, dynamic>> _getUserData() async {
               style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w500,
-                fontFamily: "Raleway",
+                fontFamily: "RobotoMono",
               ),
             ),
             trailing: const Icon(Icons.delete_forever, color: Colors.red),
@@ -202,7 +202,7 @@ Future<Map<String, dynamic>> _getUserData() async {
               style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w500,
-                fontFamily: "Raleway",
+                fontFamily: "RobotoMono",
               ),
             ),
             trailing: const Icon(Icons.attach_money, color: Colors.green),
@@ -216,7 +216,7 @@ Future<Map<String, dynamic>> _getUserData() async {
               style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w500,
-                fontFamily: "Raleway",
+                fontFamily: "RobotoMono",
               ),
             ),
             trailing: const Icon(Icons.money_off, color: Colors.red),
@@ -331,7 +331,7 @@ class TransactionListPage extends StatelessWidget {
               style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w500,
-                fontFamily: "Raleway",
+               fontFamily: "RobotoMono",
               ),
             ),
             subtitle: Text(
@@ -339,7 +339,7 @@ class TransactionListPage extends StatelessWidget {
               style: const TextStyle(
                 fontSize: 14,
                 color: Colors.black54,
-                fontFamily: "Raleway",
+               fontFamily: "RobotoMono",
               ),
             ),
           ),

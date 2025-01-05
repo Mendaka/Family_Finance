@@ -85,7 +85,7 @@ class _HomePageContentState extends State<HomePageContent> {
                             style: const TextStyle(
                               fontSize: 15,
                               color: Colors.white,
-                              fontFamily: "Raleway",
+                              fontFamily: "RobotoMono",
                             ),
                           ),
                           subtitle: Center(
@@ -95,7 +95,7 @@ class _HomePageContentState extends State<HomePageContent> {
                                 fontSize: 35,
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
-                                fontFamily: "Raleway",
+                                fontFamily: "RobotoMono",
                               ),
                             ),
                           ),
@@ -108,9 +108,9 @@ class _HomePageContentState extends State<HomePageContent> {
                                 AppTranslations.getText(
                                     'expense', currentLanguage),
                                 style: const TextStyle(
-                                  fontSize: 10,
+                                  fontSize: 13,
                                   color: Colors.white,
-                                  fontFamily: "Raleway",
+                                  fontFamily: "RobotoMono",
                                 ),
                               ),
                               Text(
@@ -119,7 +119,7 @@ class _HomePageContentState extends State<HomePageContent> {
                                   fontSize: 15,
                                   color: Colors.white,
                                   fontWeight: FontWeight.bold,
-                                  fontFamily: "Raleway",
+                                  fontFamily: "RobotoMono",
                                 ),
                               ),
                             ],
@@ -131,16 +131,16 @@ class _HomePageContentState extends State<HomePageContent> {
                                 AppTranslations.getText(
                                     'balance', currentLanguage),
                                 style: const TextStyle(
-                                  fontSize: 10,
+                                  fontSize: 13,
                                   color: Colors.white,
-                                  fontFamily: "Raleway",
+                                  fontFamily: "RobotoMono",
                                 ),
                               ),
                               Text(
                                 '$formattedBalance $currencySymbol',
                                 style: const TextStyle(
                                   fontSize: 15,
-                                  color: Colors.white,
+                                  color: Colors.white,fontFamily: "RobotoMono",
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -198,8 +198,9 @@ class _HomePageContentState extends State<HomePageContent> {
                         child: Text(
                           DateFormat('dd MMM yyyy')
                               .format(DateTime.parse(date)),
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 16,
+                            fontFamily: "RobotoMono",
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -231,13 +232,18 @@ class _HomePageContentState extends State<HomePageContent> {
                               title,
                               style: TextStyle(
                                 color: color,
-                                fontFamily: "Raleway",
-                                fontWeight: FontWeight.bold,
+                                fontFamily: "RobotoMono",
+                               
                                 fontSize: 18,
                               ),
                             ),
                             subtitle: Text(
-                              '${AppTranslations.getText('time', currentLanguage)}: $time',
+                              '${AppTranslations.getText('time', currentLanguage)}: $time',style: TextStyle(
+                                   
+                                    fontFamily: "RobotoMono",
+                                    fontSize: 15,
+                                   
+                                  ),
                             ),
                             trailing: Column(
                               crossAxisAlignment: CrossAxisAlignment.end,
@@ -249,16 +255,16 @@ class _HomePageContentState extends State<HomePageContent> {
                                   ),
                                   style: TextStyle(
                                     color: color,
-                                    fontFamily: "Raleway",
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w500,
+                                    fontFamily: "RobotoMono",
+                                    fontSize: 13,
+                                   
                                   ),
                                 ),
                                 Text(
                                   '${amount.toStringAsFixed(2)} $currencySymbol',
                                   style: TextStyle(
                                     color: color,
-                                    fontSize: 15,
+                                    fontSize: 15,fontFamily: "RobotoMono",
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),

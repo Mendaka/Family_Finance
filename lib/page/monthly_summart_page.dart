@@ -62,7 +62,7 @@ class MonthlySummaryPage extends StatelessWidget {
               style: const TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
-                fontFamily: "Raleway",
+                fontFamily: "RobotoMono",
               ),
             ),
             const SizedBox(height: 20),
@@ -153,7 +153,7 @@ class MonthlySummaryPage extends StatelessWidget {
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w500,
-                      fontFamily: "Raleway",
+                      fontFamily: "RobotoMono",
                     ),
                   ),
                   const SizedBox(height: 5),
@@ -162,7 +162,7 @@ class MonthlySummaryPage extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
-                      color: color,
+                      color: color, fontFamily: "RobotoMono",
                     ),
                   ),
                   if (extraText != null)
@@ -171,7 +171,7 @@ class MonthlySummaryPage extends StatelessWidget {
                       style: const TextStyle(
                         fontSize: 14,
                         color: Colors.grey,
-                        fontFamily: "Raleway",
+                        fontFamily: "RobotoMono",
                       ),
                     ),
                 ],

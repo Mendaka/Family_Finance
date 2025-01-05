@@ -97,7 +97,7 @@ class CustomDrawer extends StatelessWidget {
             title: Text('About Family Finance App'),
             content: Text(
               'Family Finance helps your family manage income and expenses effectively.\n' +
-                  'Version: 1.0.0\n' +
+                  'Version: 2.0.0\n' +
                   'Developed by: Mendaka Developer',
             ),
             actions: [

@@ -280,7 +280,7 @@ void initState() {
         title: Text(
           AppTranslations.getText('app_title', currentLanguage),
           style: const TextStyle(
-              fontSize: 20, fontFamily: "Raleway", fontWeight: FontWeight.bold),
+              fontSize: 22, fontFamily: "RobotoMono", ),
         ),
         actions: [
           PopupMenuButton<String>(

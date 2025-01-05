@@ -63,13 +63,13 @@ class PolicyScreen extends StatelessWidget {
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
-            color: Colors.blue,
+            color: Colors.blue,fontFamily: "RobotoMono",
           ),
         ),
         SizedBox(height: 5),
         Text(
           description,
-          style: TextStyle(fontSize: 14, color: Colors.black87),
+          style: TextStyle(fontSize: 14, color: Colors.black87,fontFamily: "RobotoMono",),
         ),
       ],
     );
